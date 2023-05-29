@@ -1,6 +1,7 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
-    <application
-        android:label="agenda"
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.agenda_greed">
+   <application
+        android:label="agenda_greed"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
