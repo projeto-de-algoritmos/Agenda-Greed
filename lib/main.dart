@@ -1,19 +1,25 @@
-import 'package:agenda/adapter.dart';
+import 'package:agenda/bloc/job_bloc.dart';
+import 'package:agenda/components/add_job_modal.dart';
 import 'package:agenda/get_data.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'firebase_options.dart';
 
 GetData dataRepo = GetData();
 late final FirebaseFirestore db;
+JobBloc jobBloc = JobBloc();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
   db = FirebaseFirestore.instance;
-  runApp(const MyApp());
+  runApp(BlocProvider(
+    create: (context) => jobBloc,
+    child: const MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -27,8 +33,19 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  @override
+  void initState() {
+    jobBloc.add(FetchJobListEvent());
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,27 +53,76 @@ class HomePage extends StatelessWidget {
       appBar: AppBar(
         title: const Center(child: Text("Agenda")),
       ),
-      body: FutureBuilder(
-          future: db.collection("jobs").get(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              final jobList = JobAdapter.fromJson(snapshot.data!.docs);
-              return ListView(
-                scrollDirection: Axis.horizontal,
-                children: jobList
-                    .map((e) => JobWidget(
-                          name: e.name,
-                        ))
-                    .toList(),
-              );
-            }
-            return const JobWidget(
-              name: "TEste",
-            );
-          }),
+      body: BlocConsumer<JobBloc, JobState>(
+        listener: (context, state) {
+          if (state.betterJobs.isEmpty && state.allJobs.isNotEmpty) {
+            jobBloc.add(UpdateBetterJobCombinationEvent());
+          }
+        },
+        builder: (context, state) {
+          return Column(
+            children: [
+              const Text("Todas tarefas"),
+              SizedBox(
+                height: MediaQuery.of(context).size.height / 14,
+              ),
+              SizedBox(
+                height: 60,
+                child: ListView.builder(
+                  itemCount: state.allJobs.length,
+                  scrollDirection: Axis.horizontal,
+                  shrinkWrap: true,
+                  itemBuilder: (context, index) {
+                    return JobWidget(
+                      name: state.allJobs[index].name!,
+                      endTime: state.allJobs[index].endTime.toString(),
+                      startTime: state.allJobs[index].startTime.toString(),
+                      height: MediaQuery.of(context).size.height / 14,
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(
+                height: 60,
+              ),
+              const Text("Melhores opções"),
+              Padding(
+                padding: const EdgeInsets.only(left: 20, right: 20),
+                child: Container(
+                  color: Colors.green,
+                  height: 100,
+                  child: SizedBox(
+                    height: 60,
+                    child: ListView.builder(
+                      itemCount: state.betterJobs.length,
+                      scrollDirection: Axis.horizontal,
+                      shrinkWrap: true,
+                      itemBuilder: (context, index) {
+                        return JobWidget(
+                          name: state.betterJobs[index].name!,
+                          endTime: state.betterJobs[index].endTime.toString(),
+                          startTime:
+                              state.betterJobs[index].startTime.toString(),
+                          height: MediaQuery.of(context).size.height / 14,
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          await db.collection('jobs').doc().set({"name": "Algo"});
+          showModalBottomSheet(
+            isScrollControlled: true,
+            context: context,
+            builder: (context) {
+              return const AddJobModal();
+            },
+          );
         },
         child: const Icon(Icons.add),
       ),
@@ -66,57 +132,53 @@ class HomePage extends StatelessWidget {
 
 class JobWidget extends StatelessWidget {
   final String name;
+  final String endTime;
+  final String startTime;
+  final double? width;
+  final double? height;
   const JobWidget({
     super.key,
     required this.name,
+    this.width,
+    this.height,
+    required this.startTime,
+    required this.endTime,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.red,
-      width: 60,
-      height: 60,
+      decoration: BoxDecoration(
+          color: Colors.red,
+          border: Border.all(),
+          borderRadius: const BorderRadius.all(Radius.circular(5))),
+      width: width ?? 60,
+      height: height ?? 60,
       child: Center(
-        child: Text(
-          name,
-          style: const TextStyle(color: Colors.black),
-        ),
-      ),
-    );
-  }
-}
-
-class JobCard extends StatelessWidget {
-  final String name;
-  const JobCard({
-    super.key,
-    required this.name,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: 50,
-      height: 50,
-      child: Card(
-        color: Colors.red,
-        elevation: 0,
-        child: Container(
-          padding: const EdgeInsets.all(10),
-          child: Column(
-            children: [
-              const Align(
-                alignment: Alignment.topRight,
-                child: Icon(Icons.more_vert),
+        child: Stack(
+          children: [
+            Align(
+              alignment: Alignment.center,
+              child: Text(
+                name,
+                style: const TextStyle(color: Colors.black),
               ),
-              const SizedBox(height: 35),
-              Align(
-                alignment: Alignment.bottomLeft,
-                child: Text(name),
-              )
-            ],
-          ),
+            ),
+            Align(
+              alignment: Alignment.bottomLeft,
+              child: Text(
+                startTime,
+                style: const TextStyle(color: Colors.black),
+              ),
+            ),
+            Align(
+              alignment: Alignment.bottomRight,
+              child: Text(
+                endTime,
+                style: const TextStyle(color: Colors.black),
+              ),
+            ),
+          ],
         ),
       ),
     );

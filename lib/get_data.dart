@@ -1,6 +1,6 @@
-import 'package:agenda/adapter.dart';
+import 'package:agenda/adapter/adapter.dart';
+import 'package:agenda/entity/job.dart';
 import 'package:agenda/main.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 class GetData {
   GetData();
@@ -11,10 +11,4 @@ class GetData {
     jobsList = JobAdapter.fromJson(data.docs);
     return jobsList;
   }
-}
-
-class Job {
-  final String name;
-
-  Job({required this.name});
 }
