@@ -27,8 +27,14 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: HomePage(),
+    return MaterialApp(
+      home: const HomePage(),
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        colorSchemeSeed: Colors.red,
+        brightness: Brightness.light,
+        useMaterial3: true,
+      ),
     );
   }
 }
@@ -51,7 +57,8 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Center(child: Text("Agenda")),
+        title: const Center(child: Text("Agendador")),
+        backgroundColor: Theme.of(context).primaryColorLight,
       ),
       body: BlocConsumer<JobBloc, JobState>(
         listener: (context, state) {
@@ -62,22 +69,25 @@ class _HomePageState extends State<HomePage> {
         builder: (context, state) {
           return Column(
             children: [
-              const Text("Todas tarefas"),
               SizedBox(
                 height: MediaQuery.of(context).size.height / 14,
               ),
+              const Text("Todas tarefas"),
               SizedBox(
-                height: 60,
+                height: 100,
                 child: ListView.builder(
                   itemCount: state.allJobs.length,
                   scrollDirection: Axis.horizontal,
                   shrinkWrap: true,
                   itemBuilder: (context, index) {
-                    return JobWidget(
-                      name: state.allJobs[index].name!,
-                      endTime: state.allJobs[index].endTime.toString(),
-                      startTime: state.allJobs[index].startTime.toString(),
-                      height: MediaQuery.of(context).size.height / 14,
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: JobWidget(
+                        name: state.allJobs[index].name!,
+                        endTime: state.allJobs[index].endTime.toString(),
+                        startTime: state.allJobs[index].startTime.toString(),
+                        width: 150,
+                      ),
                     );
                   },
                 ),
@@ -98,12 +108,16 @@ class _HomePageState extends State<HomePage> {
                       scrollDirection: Axis.horizontal,
                       shrinkWrap: true,
                       itemBuilder: (context, index) {
-                        return JobWidget(
-                          name: state.betterJobs[index].name!,
-                          endTime: state.betterJobs[index].endTime.toString(),
-                          startTime:
-                              state.betterJobs[index].startTime.toString(),
-                          height: MediaQuery.of(context).size.height / 14,
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: JobWidget(
+                            name: state.betterJobs[index].name!,
+                            endTime: state.betterJobs[index].endTime.toString(),
+                            startTime:
+                                state.betterJobs[index].startTime.toString(),
+                            height: 150,
+                            width: 150,
+                          ),
                         );
                       },
                     ),
@@ -115,6 +129,7 @@ class _HomePageState extends State<HomePage> {
         },
       ),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: Theme.of(context).primaryColorLight,
         onPressed: () async {
           showModalBottomSheet(
             isScrollControlled: true,
@@ -149,7 +164,7 @@ class JobWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-          color: Colors.red,
+          color: Theme.of(context).primaryColorDark,
           border: Border.all(),
           borderRadius: const BorderRadius.all(Radius.circular(5))),
       width: width ?? 60,

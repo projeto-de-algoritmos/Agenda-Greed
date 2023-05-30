@@ -19,7 +19,7 @@ class JobBloc extends Bloc<JobEvent, JobState> {
 
       jobsList.sort((firstJob, secondJob) =>
           firstJob.endTime!.compareTo(secondJob.endTime!));
-      print("Sorted list of jobs by endtime: ${state.allJobs}");
+      /* print("Sorted list of jobs by endtime: ${state.allJobs}"); */
       // Add first Job on the solution
       solution.add(state.allJobs.first);
 
@@ -31,6 +31,7 @@ class JobBloc extends Bloc<JobEvent, JobState> {
           solution.add(currentJob);
         }
       }
+      print("Solution: $solution");
       emit(state.copyWith(null, solution));
     });
     on<AddJobEvent>((event, emit) async {

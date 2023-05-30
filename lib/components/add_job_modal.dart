@@ -19,126 +19,148 @@ class _AddJobModalState extends State<AddJobModal> {
   Job _job = const Job(name: null, startTime: null, endTime: null);
   @override
   Widget build(BuildContext context) {
-    return Form(
-      key: formKey,
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 20),
-            child: Center(
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15),
-                  color: Colors.amber,
-                ),
-                height: 4,
-                width: 64,
-              ),
-            ),
-          ),
-          const Padding(
-            padding: EdgeInsets.only(
-              bottom: 20,
-              right: 12,
-              left: 12,
-            ),
-            child: Text(
-              "Text",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ),
-          const Divider(
-            thickness: 1,
-            height: 0,
-          ),
-          // add textfields
-          NameField(
-            autovalidateMode: AutovalidateMode.onUserInteraction,
-            decoration: InputDecoration(
-              labelText: "Name",
-              floatingLabelBehavior: FloatingLabelBehavior.never,
-              contentPadding: const EdgeInsets.all(15),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(6),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(6),
-                borderSide: const BorderSide(
-                  width: 1,
-                  color: Colors.green,
+    return SizedBox(
+      height: MediaQuery.of(context).size.height / 1.1,
+      width: MediaQuery.of(context).size.width,
+      child: Form(
+        key: formKey,
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 20),
+              child: Center(
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                    color: Colors.amber,
+                  ),
+                  height: 4,
+                  width: 64,
                 ),
               ),
             ),
-            cursorColor: Colors.green,
-            controller: nameController,
-            onSaved: (name) {
-              _job = _job.copyWith(name: name);
-            },
-          ),
-          StartTimeField(
-            autovalidateMode: AutovalidateMode.onUserInteraction,
-            decoration: InputDecoration(
-              labelText: "Start Time",
-              floatingLabelBehavior: FloatingLabelBehavior.never,
-              contentPadding: const EdgeInsets.all(15),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(6),
+            const Padding(
+              padding: EdgeInsets.only(
+                bottom: 20,
+                right: 12,
+                left: 12,
               ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(6),
-                borderSide: const BorderSide(
-                  width: 1,
-                  color: Colors.green,
+              child: Text(
+                "Text",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
                 ),
+                textAlign: TextAlign.center,
               ),
             ),
-            cursorColor: Colors.green,
-            controller: startTimeController,
-            onSaved: (startTime) {
-              _job = _job.copyWith(startTime: int.parse(startTime!));
-            },
-            /* validator: (string) => jobValidator(string!), */
-          ),
-          EndTimeField(
-            autovalidateMode: AutovalidateMode.onUserInteraction,
-            decoration: InputDecoration(
-              labelText: "End Time",
-              floatingLabelBehavior: FloatingLabelBehavior.never,
-              contentPadding: const EdgeInsets.all(15),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(6),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(6),
-                borderSide: const BorderSide(
-                  width: 1,
-                  color: Colors.green,
+            const Divider(
+              thickness: 1,
+              height: 0,
+            ),
+            // add textfields
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: NameField(
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                decoration: InputDecoration(
+                  labelText: "Name",
+                  floatingLabelBehavior: FloatingLabelBehavior.never,
+                  contentPadding: const EdgeInsets.all(15),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(6),
+                    borderSide: const BorderSide(
+                      width: 1,
+                      color: Colors.green,
+                    ),
+                  ),
                 ),
+                cursorColor: Colors.green,
+                controller: nameController,
+                onSaved: (name) {
+                  _job = _job.copyWith(name: name);
+                },
               ),
             ),
-            cursorColor: Colors.green,
-            controller: endTimeController,
-            onSaved: (string) {
-              _job = _job.copyWith(endTime: int.parse(string!));
-            },
-            /* validator: (string) => jobValidator(string!), */
-          ),
-          ElevatedButton(
-            onPressed: () {
-              if (!formKey.currentState!.validate()) return;
-              formKey.currentState!.save();
-              //todo bloc
-              jobBloc.add(AddJobEvent(_job));
-              jobBloc.add(FetchJobListEvent());
-              jobBloc.add(UpdateBetterJobCombinationEvent());
-              Navigator.of(context).pop();
-            },
-            child: const Center(child: Text("Send Job")),
-          ),
-        ],
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: StartTimeField(
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                decoration: InputDecoration(
+                  labelText: "Start Time",
+                  floatingLabelBehavior: FloatingLabelBehavior.never,
+                  contentPadding: const EdgeInsets.all(15),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(6),
+                    borderSide: const BorderSide(
+                      width: 1,
+                      color: Colors.green,
+                    ),
+                  ),
+                ),
+                cursorColor: Colors.green,
+                controller: startTimeController,
+                onSaved: (startTime) {
+                  _job = _job.copyWith(startTime: int.parse(startTime!));
+                },
+                /* validator: (string) =>
+                    string == null ? null : jobValidator(string), */
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: EndTimeField(
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                decoration: InputDecoration(
+                  labelText: "End Time",
+                  floatingLabelBehavior: FloatingLabelBehavior.never,
+                  contentPadding: const EdgeInsets.all(15),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(6),
+                    borderSide: const BorderSide(
+                      width: 1,
+                      color: Colors.green,
+                    ),
+                  ),
+                ),
+                cursorColor: Colors.green,
+                controller: endTimeController,
+                onSaved: (string) {
+                  _job = _job.copyWith(endTime: int.parse(string!));
+                },
+                /*  validator: (string) =>
+                    string == null ? null : jobValidator(string), */
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(40, 20, 40, 20),
+              child: ElevatedButton(
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.resolveWith(
+                      (states) => Theme.of(context).primaryColorLight),
+                ),
+                onPressed: () {
+                  if (!formKey.currentState!.validate()) return;
+                  formKey.currentState!.save();
+                  //todo bloc
+                  jobBloc.add(AddJobEvent(_job));
+                  jobBloc.add(FetchJobListEvent());
+                  jobBloc.add(UpdateBetterJobCombinationEvent());
+                  Navigator.of(context).pop();
+                },
+                child: const Center(child: Text("Send Job")),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
