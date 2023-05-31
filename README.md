@@ -5,7 +5,6 @@
 |Matrícula | Aluno |
 | -- | -- |
 | 19/0084600  |  Arthur José Nascimento de Lima |
-| 19/0026588  |  Davi Lima da Silva |
 
 ## Sobre 
 Agenda-Greed é um software para auxiliar na realização do máximo de tarefas para o intervalo de 8 a 22 horas, utiliza interval Schedule para gerar a melhor combinação de tarefas.
