@@ -1,6 +1,6 @@
 # Agenda- Greed
 
-**Conteúdo da Disciplina**: GRAFOS 1<br>
+**Conteúdo da Disciplina**: GREED<br>
 ## Alunos
 |Matrícula | Aluno |
 | -- | -- |
